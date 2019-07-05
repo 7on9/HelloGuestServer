@@ -1,0 +1,21 @@
+module.exports = {
+  MEETING: {
+    CREATE: "CREATE_MEETING",
+    START: "START_MEETING",
+    JOIN: "JOIN_MEETING",
+    LEAVE: "LEAVE_MEETING",
+    END: "END_MEETING",
+    TITLE: "TITLE_MEETING"
+  },
+  GUEST: {
+    CHECKIN: "GUEST_CHECK_IN",
+    GET_INFO: "GET_INFO_GUEST"
+  },
+  STATUS: {
+    SUCCESS: "SUCCESS",
+    FAIL: "FAIL"
+  },
+  ERROR: {
+    NOT_EXIST: "NOT_EXIST"
+  }
+}
