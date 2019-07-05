@@ -9,7 +9,7 @@ let io = require("socket.io").listen(server),
   socket = require("./socket")(io);
 // io.origins('*'| ['http://localhost:3000']);
 io.origins(() => { })
-let port = 1304;
-server.listen(process.env.PORT || port, () => {
+let port = process.env.PORT || port;
+server.listen(port, 'http://3.17.161.232:1304/', () => {
   console.log('Server listening on port ' + port);
 });
