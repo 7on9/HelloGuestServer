@@ -9,7 +9,7 @@ let io = require("socket.io").listen(server),
   socket = require("./socket")(io);
 // io.origins('*'| ['http://localhost:3000']);
 
-io.origins("*|*");
+io.origins();
 
 let port = 3104;
 server.listen(port, () => {
