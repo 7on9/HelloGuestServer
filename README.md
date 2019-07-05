@@ -10,8 +10,11 @@ to
  if you don't - the app will not work.
 
 | ___common/
+
 &nbsp;&nbsp;&nbsp;&nbsp;| ___constant/
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| ___**cloudinary.js**
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| ___**database.js**
 
 
