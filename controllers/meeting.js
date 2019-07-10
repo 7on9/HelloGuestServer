@@ -15,6 +15,7 @@ let meeting = {
       timeLine: [],
       code: null,
       time: meeting.time,
+      duration: meeting.duration,
       decription: meeting.decription,
       status: -1, //-1 not started yet 0 attending 1 ended
       deleted: false

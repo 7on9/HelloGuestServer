@@ -75,7 +75,7 @@ exports = module.exports = (io) => {
       let idMeeting = Utility.getMeetingIdFromCode(code);
       if (idMeeting) {
         let guests = mapGuestOfMeeting.get(idMeeting);
-        if(guests){
+        if (guests) {
           socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
           return;
         }
@@ -98,7 +98,7 @@ exports = module.exports = (io) => {
     socket.on(EVENT.GUEST.CHECKIN, (idGuest, code) => {
       let idMeeting = Utility.getMeetingIdFromCode(code);
       let attendance = mapTimeLineMeeting.get(idMeeting);
-      if(!attendance.guestAttended.includes(idGuest)){
+      if (!attendance.guestAttended.includes(idGuest)) {
         attendance.guestAttended.push(idGuest);
         attendance.timeLine.push(Date.now() / 1000.0);
       }
@@ -107,5 +107,4 @@ exports = module.exports = (io) => {
     })
     /************************************CHECK_IN********************************************/
   })
-
 }

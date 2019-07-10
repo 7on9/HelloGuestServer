@@ -15,6 +15,7 @@ let meetingSchema = new mongoose.Schema({
   timeLine: [Number],
   code: Number,
   time: Number,
+  duration: Number,
   decription: String,
   status: Number,
   deleted: Boolean
