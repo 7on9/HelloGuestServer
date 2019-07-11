@@ -1,7 +1,7 @@
 let app = require("./app");
 var cors = require('cors')
 
-app.use(cors({}));
+app.use(cors());
 
 //socket io for game
 let server = require("http").createServer(app);
