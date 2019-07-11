@@ -80,6 +80,53 @@ router
       }
     })
   })
+  .post("/update", (req, res, next) => {
+    let guest = JSON.parse(req.body.guest);
+    Utility.verifyToken(req.headers.token, (err, account) => {
+      if (account) {
+        if (guest.img) {
+          Cloudinary.upload(guest.img, (err, url) => {
+            if (err) {
+              res.status(500).send({
+                success: false
+              })
+            } else {
+              guest.img = url;
+              Guest.updateGuest(account._id, guest, (err, guests) => {
+                if (!err) {
+                  res.status(200).send({
+                    success: true,
+                    allGuests: guests
+                  })
+                } else {
+                  res.status(500).send({
+                    success: false
+                  })
+                }
+              })
+            }
+          })
+        } else {
+          Guest.updateGuest(account._id, guest, (err, guests) => {
+            if (!err) {
+              res.status(200).send({
+                success: true,
+                allGuests: guests
+              })
+            } else {
+              res.status(500).send({
+                success: false
+              })
+            }
+          })
+        }
+      } else {
+        res.status(401).send({
+          success: false
+        });
+      }
+    })
+  })
   .post("/delete", (req, res, next) => {
     console.log('Ok');
     if (req.headers.token) {

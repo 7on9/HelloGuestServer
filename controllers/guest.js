@@ -48,6 +48,47 @@ let guests = {
         }
       })
   },
+  updateGuest: (accountId, guest, callback) => {
+    // let newGuest = {
+    //   name: guest.name,
+    //   address: guest.address,
+    //   imagePath: guest.img,
+    //   gender: guest.gender,
+    //   dob: guest.dob,
+    //   department: guest.department,
+    //   seat: null,
+    //   attendance: false
+    // };
+    Account
+      .findById(accountId)
+      .exec((err, account) => {
+        if (account) {
+          let pos = account.guests.findIndex((gue, id) => {
+            return (gue._id.toString() == guest._id.toString())
+          })
+          if(pos != -1){
+            if(guest.img) {
+              account.guests[pos].imagePath = guest.img
+            }
+            account.guests[pos].name = guest.name;
+            account.guests[pos].address = guest.address;
+            // account.guests[pos].imagePath = guest.img;
+            account.guests[pos].gender = guest.gender;
+            account.guests[pos].dob = guest.dob;
+            account.guests[pos].department = guest.department;
+          }
+          // account.guests.push(newGuest);
+          account.save()
+            .then(acc => {
+              return callback(null, acc.guests);
+            }).catch((err) => {
+              return callback(err, null);
+            });
+        } else {
+          return callback(err, null);
+        }
+      })
+  },
   deleteGuest: (accountId, guestId, callback) => {
     Account
       .findById(accountId)
