@@ -75,12 +75,12 @@ exports = module.exports = (io) => {
       let idMeeting = Utility.getMeetingIdFromCode(code);
       if (idMeeting) {
         let guests = mapGuestOfMeeting.get(idMeeting);
-        if (guests) {
+        if (!guests) {
           socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
           return;
         }
         let pos = guests.findIndex((guest) => {
-          return guest._id.toString() === idGuest;
+          return guest._id.toString() == idGuest.toString();
         });
 
         if (pos > -1) {
