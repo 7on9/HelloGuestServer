@@ -14,8 +14,8 @@ let guests = {
       })
   },
   getGuestOfAccount: (guests, idGuest, callback) => {
-    let guest = guests.find(val => val._id == idGuest);
-    if(guest){
+    let guest = guests.find(val => val._id.toString() == idGuest);
+    if (guest) {
       return callback(null, guest);
     } else {
       return callback(err, null);
@@ -49,16 +49,6 @@ let guests = {
       })
   },
   updateGuest: (accountId, guest, callback) => {
-    // let newGuest = {
-    //   name: guest.name,
-    //   address: guest.address,
-    //   imagePath: guest.img,
-    //   gender: guest.gender,
-    //   dob: guest.dob,
-    //   department: guest.department,
-    //   seat: null,
-    //   attendance: false
-    // };
     Account
       .findById(accountId)
       .exec((err, account) => {
@@ -66,8 +56,8 @@ let guests = {
           let pos = account.guests.findIndex((gue, id) => {
             return (gue._id.toString() == guest._id.toString())
           })
-          if(pos != -1){
-            if(guest.img) {
+          if (pos != -1) {
+            if (guest.img) {
               account.guests[pos].imagePath = guest.img
             }
             account.guests[pos].name = guest.name;

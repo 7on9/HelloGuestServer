@@ -27,12 +27,12 @@ exports = module.exports = (io) => {
     /************************************END_MEETING********************************************/
     socket.on(EVENT.MEETING.END, (idMeeting) => {
       if (idMeeting) {
-        let attendance = mapTimeLineMeeting.get(idMeeting.toString());
-        Meeting.endMeeting(idMeeting, attendance, (err, res) => {
+        // let attendance = mapTimeLineMeeting.get(idMeeting.toString());
+        Meeting.endMeeting(idMeeting, [], (err, res) => {
           socket.emit(EVENT.MEETING.END, EVENT.STATUS.SUCCESS, res);
-          io.sockets.clients(idMeeting).forEach(s => {
-            s.leave(code);
-          });
+          // io.sockets.clients(idMeeting).forEach(s => {
+          //   s.leave(code);
+          // });
         })
       } else {
         socket.emit(EVENT.MEETING.END, EVENT.STATUS.FAIL)
@@ -72,38 +72,51 @@ exports = module.exports = (io) => {
 
     /************************************GET_INFO********************************************/
     socket.on(EVENT.GUEST.GET_INFO, (idGuest, code) => {
-      let idMeeting = Utility.getMeetingIdFromCode(code);
-      if (idMeeting) {
-        let guests = mapGuestOfMeeting.get(idMeeting);
-        if (!guests) {
-          socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
-          return;
-        }
-        let pos = guests.findIndex((guest) => {
-          return guest._id.toString() == idGuest.toString();
-        });
-
-        if (pos > -1) {
-          socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.SUCCESS, guests[pos]);
+      /* only for linh trung's ver */
+      console.log('Ok xx');
+      Meeting.getGuest(idGuest, 'linhtrung.thuduc@tphcm.gov.vn', (err, guest) => {
+        if(guest) {
+          socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.SUCCESS, guest);
         } else {
           socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
         }
-      } else {
-        socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
-      }
+      })
+      /* only for linh trung's ver */
+
+      // let idMeeting = Utility.getMeetingIdFromCode(code);
+      // if (idMeeting) {
+      //   let guests = mapGuestOfMeeting.get(idMeeting);
+      //   if (!guests) {
+      //     socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
+      //     return;
+      //   }
+      //   let pos = guests.findIndex((guest) => {
+      //     return guest._id.toString() == idGuest.toString();
+      //   });
+      //   if (pos > -1) {
+      //     socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.SUCCESS, guests[pos]);
+      //   } else {
+      //     socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
+      //   }
+      // } else {
+      //   socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
+      // }
     });
     /************************************GET_INFO********************************************/
 
     /************************************CHECK_IN********************************************/
-    socket.on(EVENT.GUEST.CHECKIN, (idGuest, code) => {
-      let idMeeting = Utility.getMeetingIdFromCode(code);
-      let attendance = mapTimeLineMeeting.get(idMeeting);
-      if (!attendance.guestAttended.includes(idGuest)) {
-        attendance.guestAttended.push(idGuest);
-        attendance.timeLine.push(Date.now() / 1000.0);
-      }
-      io.to(code).emit(EVENT.GUEST.CHECKIN, idGuest, attendance);
-      socket.emit(EVENT.GUEST.CHECKIN, EVENT.STATUS.SUCCESS);
+    socket.on(EVENT.GUEST.CHECKIN, (idGuest, code, email) => {
+      //only for linh trung's ver
+      Meeting.attend(code, idGuest, 'linhtrung.thuduc@tphcm.gov.vn', (err, success) => {
+        socket.emit(EVENT.GUEST.CHECKIN, success ? EVENT.STATUS.SUCCESS : EVENT.STATUS.FAIL);
+      })
+      // let idMeeting = Utility.getMeetingIdFromCode(code);
+      // let attendance = mapTimeLineMeeting.get(idMeeting);
+      // if (!attendance.guestAttended.includes(idGuest)) {
+      //   attendance.guestAttended.push(idGuest);
+      //   attendance.timeLine.push(Date.now() / 1000.0);
+      // }
+      // io.to(code).emit(EVENT.GUEST.CHECKIN, idGuest, attendance);
     })
     /************************************CHECK_IN********************************************/
   })

@@ -9,6 +9,8 @@ router
       if (account) {
         Meeting.getAllMeetings(account._id, (err, meetings) => {
           if (meetings) {
+            console.log(meetings);
+            
             res.status(200).send({
               success: true,
               allMeetings: meetings
@@ -97,6 +99,9 @@ router
         success: false
       });
     }
+  })
+  .post("/attend", (req, res, next) => {
+    
   })
   .post("/delete", (req, res, next) => {
     if (req.headers.token) {

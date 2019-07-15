@@ -35,30 +35,30 @@ let meeting = {
       status: -1,
       deleted: false
     }, (err, meeting) => {
-      if(meeting){
+      if (meeting) {
         meeting.status = 0;
         meeting.code = Utility.createMeetingCode(idMeeting);
         meeting.save()
           .then(meeting => callback(null, meeting));
-      }else{
+      } else {
         callback(err, null)
-      }  
+      }
     })
   },
   getMeeting: (idMeeting, callback) => {
     Meeting.findOne({
       _id: idMeeting
     })
-    .then((meeting) => callback(null, meeting))
-    .catch(err => callback(err, null))
+      .then((meeting) => callback(null, meeting))
+      .catch(err => callback(err, null))
   },
   getMeetingOfAccount: (idOwner, idMeeting, callback) => {
     Meeting.findOne({
       idOwner: idOwner,
       _id: idMeeting
     })
-    .then((meeting) => callback(null, meeting))
-    .catch((err) => callback("NOT_EXIST", null))
+      .then((meeting) => callback(null, meeting))
+      .catch((err) => callback("NOT_EXIST", null))
   },
   getAllMeetings: (idOwner, callback) => {
     Meeting.find({
@@ -85,13 +85,54 @@ let meeting = {
     Meeting.findOne({
       _id: idMeeting
     }, (err, meeting) => {
-      meeting.guestAttended = attendance.guestAttended;
-      meeting.timeLine = attendance.timeLine;
+      // meeting.guestAttended = attendance.guestAttended;
+      // meeting.timeLine = attendance.timeLine;
       meeting.status = 1;
       meeting.code = null;
       meeting.save()
         .then(meeting => callback(null, meeting))
         .catch(err => callback(err, null));
+    })
+  },
+  getGuest: (idGuest, emailAccount, callback) => {
+    let guest;
+    Account.findOne({
+      email: emailAccount
+    }, (err, account) => {
+      if (account) {
+        let guests = Array.from(account.guests).map(v => v.toJSON());
+        guest = guests.find(g => g._id.toString() == idGuest.toString()) 
+      } else {
+        guest = null;
+      }
+      return callback(null, guest);
+    })
+  },
+  attend: (codeMeeting, idGuest, emailAccount, callback) => {
+    meeting.getGuest(idGuest, emailAccount, (err, guest) => {
+      if (guest) {
+        Meeting.findOne({
+          code: codeMeeting
+        }, (err, mee) => {
+          if (mee) {
+            console.log(mee);
+            if (!mee.guestAttended.includes(idGuest.toString())) {
+              mee.guestAttended.push(idGuest);
+              mee.timeLine.push(Date.now() / 1000.0);
+              console.log('Ok');
+              mee.save()
+                .then(callback(null, true))
+                .catch(callback(true, null))
+            } else {
+              return callback(null, true);
+            }
+          } else {
+            return callback(true, null)
+          }
+        })
+      } else {
+        return callback(true, null)
+      }
     })
   },
   deleteMeeting: (idOwner, id, callback) => {
