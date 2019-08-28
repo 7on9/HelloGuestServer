@@ -80,6 +80,25 @@ router
       }
     })
   })
+  .post("/longcreate", (req, res, next) => {
+    let newGuest = JSON.parse(req.body.newGuest);
+    Utility.verifyToken(req.headers.token, (err, account) => {
+      if (account) {
+        Guest.createGuest(account._id, newGuest, (err, guests) => {
+          if (!err) {
+            res.status(200).send({
+              success: true,
+              allGuests: guests
+            })
+          } else {
+            res.status(500).send({
+              success: false
+            })
+          }
+        })
+      }
+    })
+  })
   .post("/update", (req, res, next) => {
     let guest = JSON.parse(req.body.guest);
     Utility.verifyToken(req.headers.token, (err, account) => {
