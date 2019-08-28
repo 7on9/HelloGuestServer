@@ -81,7 +81,8 @@ router
     })
   })
   .post("/longcreate", (req, res, next) => {
-    let newGuest = JSON.parse(req.body.newGuest);
+    console.log(req.body.newGuest)
+    let {newGuest} = req.body
     Utility.verifyToken(req.headers.token, (err, account) => {
       if (account) {
         Guest.createGuest(account._id, newGuest, (err, guests) => {

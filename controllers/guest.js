@@ -24,11 +24,11 @@ let guests = {
   createGuest: (accountId, guest, callback) => {
     let newGuest = new Guest({
       name: guest.name,
-      address: guest.address,
-      imagePath: guest.img,
-      gender: guest.gender,
-      dob: guest.dob,
-      department: guest.department,
+      address: guest.address || "1",
+      imagePath: guest.img || "1",
+      gender: guest.gender || "1",
+      dob: guest.dob || "1",
+      department: guest.department || "1",
       seat: null,
       attendance: false
     });
