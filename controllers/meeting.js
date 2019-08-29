@@ -95,6 +95,7 @@ let meeting = {
     })
   },
   getGuest: (idGuest, emailAccount, callback) => {
+    console.log(idGuest, emailAccount);
     let guest;
     Account.findOne({
       email: emailAccount
@@ -104,6 +105,7 @@ let meeting = {
         guest = guests.find(g => g._id.toString() == idGuest.toString()) 
       } else {
         guest = null;
+        console.log(err)
       }
       return callback(null, guest);
     })

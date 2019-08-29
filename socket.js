@@ -74,7 +74,9 @@ exports = module.exports = (io) => {
     socket.on(EVENT.GUEST.GET_INFO, (idGuest, code) => {
       /* only for linh trung's ver */
       console.log('Ok xx');
-      Meeting.getGuest(idGuest, 'linhtrung.thuduc@tphcm.gov.vn', (err, guest) => {
+      let email = 'tamdaulong207@yahoo.com'
+      // let email = 'linhtrung.thuduc@tphcm.gov.vn'
+      Meeting.getGuest(idGuest, email, (err, guest) => {
         if(guest) {
           socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.SUCCESS, guest);
         } else {
