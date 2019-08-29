@@ -85,20 +85,25 @@ exports = module.exports = (io) => {
       /* only for linh trung's ver */
       let email = 'tamdaulong207@yahoo.com'
       // let email = 'linhtrung.thuduc@tphcm.gov.vn'
-     try {
-      Meeting.getGuest(idGuest, email, (err, guest) => {
-        if (guest) {
-          console.log('id: ', guest._id);
-          socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.SUCCESS, guest);
-        } else {
-          console.log(err)
+      if (!idGuest) {
+        socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
+      } else {
+        try {
+          Meeting.getGuest(idGuest, email, (err, guest) => {
+            if (guest) {
+              console.log('id: ', guest._id);
+              socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.SUCCESS, guest);
+            } else {
+              console.log(err)
+              socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
+            }
+          })
+        } catch (error) {
+          console.log(error)
           socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
         }
-      })
-    } catch (error) {
-      console.log(error)
-      socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
-     }
+      }
+
       /* only for linh trung's ver */
 
       // let idMeeting = Utility.getMeetingIdFromCode(code);
@@ -140,6 +145,6 @@ exports = module.exports = (io) => {
         }
       })
     })
-  /************************************CHECK_IN********************************************/
-})
+    /************************************CHECK_IN********************************************/
+  })
 }
