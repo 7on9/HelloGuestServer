@@ -12,12 +12,17 @@ exports = module.exports = (io) => {
     socket.on(EVENT.MEETING.START, (code) => {
       let idMeeting = Utility.getMeetingIdFromCode(code);
       if (idMeeting)
-        Meeting.getAllGuestOfMeeting(idMeeting, (err, guests) => {
-          mapTimeLineMeeting.set(idMeeting.toString(), { guestAttended: [], timeLine: [] });
-          mapGuestOfMeeting.set(idMeeting.toString(), guests);
-          socket.join(code);
-          socket.emit(EVENT.MEETING.START, EVENT.STATUS.SUCCESS, JSON.stringify(guests))
-        })
+        try {
+          Meeting.getAllGuestOfMeeting(idMeeting, (err, guests) => {
+            mapTimeLineMeeting.set(idMeeting.toString(), { guestAttended: [], timeLine: [] });
+            mapGuestOfMeeting.set(idMeeting.toString(), guests);
+            socket.join(code);
+            socket.emit(EVENT.MEETING.START, EVENT.STATUS.SUCCESS, JSON.stringify(guests))
+          })
+        } catch (error) {
+          console.log(error);
+          socket.emit(EVENT.MEETING.START, EVENT.STATUS.FAIL)
+        }
       else {
         socket.emit(EVENT.MEETING.START, EVENT.STATUS.FAIL)
       }
@@ -44,27 +49,32 @@ exports = module.exports = (io) => {
     })
     /************************************JOIN_MEETING********************************************/
     socket.on(EVENT.MEETING.JOIN, code => {
-      if (code) {
-        let idMeeting = Utility.getMeetingIdFromCode(code.toString());
-        if (idMeeting) {
-          let listGuest = mapGuestOfMeeting.get(idMeeting);
-          let attendance = mapTimeLineMeeting.get(idMeeting);
-          if (listGuest) {
-            socket.join(code);
-            socket.emit(EVENT.MEETING.JOIN, EVENT.STATUS.SUCCESS, listGuest, attendance);
-            Meeting.getMeeting(idMeeting, (err, meeting) => {
-              socket.emit(EVENT.MEETING.TITLE, {
-                welcomeTitle: meeting.welcomeTitle,
-                name: meeting.name
-              });
-            })
+      try {
+        if (code) {
+          let idMeeting = Utility.getMeetingIdFromCode(code.toString());
+          if (idMeeting) {
+            let listGuest = mapGuestOfMeeting.get(idMeeting);
+            let attendance = mapTimeLineMeeting.get(idMeeting);
+            if (listGuest) {
+              socket.join(code);
+              socket.emit(EVENT.MEETING.JOIN, EVENT.STATUS.SUCCESS, listGuest, attendance);
+              Meeting.getMeeting(idMeeting, (err, meeting) => {
+                socket.emit(EVENT.MEETING.TITLE, {
+                  welcomeTitle: meeting.welcomeTitle,
+                  name: meeting.name
+                });
+              })
+            } else {
+              socket.emit(EVENT.MEETING.JOIN, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
+            }
           } else {
             socket.emit(EVENT.MEETING.JOIN, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
           }
         } else {
           socket.emit(EVENT.MEETING.JOIN, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
         }
-      } else {
+      } catch (error) {
+        console.log(error);
         socket.emit(EVENT.MEETING.JOIN, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
       }
     });
@@ -73,16 +83,22 @@ exports = module.exports = (io) => {
     /************************************GET_INFO********************************************/
     socket.on(EVENT.GUEST.GET_INFO, (idGuest, code) => {
       /* only for linh trung's ver */
-      console.log('Ok xx');
       let email = 'tamdaulong207@yahoo.com'
       // let email = 'linhtrung.thuduc@tphcm.gov.vn'
+     try {
       Meeting.getGuest(idGuest, email, (err, guest) => {
         if (guest) {
+          console.log('id: ', guest._id);
           socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.SUCCESS, guest);
         } else {
+          console.log(err)
           socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
         }
       })
+    } catch (error) {
+      console.log(error)
+      socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
+     }
       /* only for linh trung's ver */
 
       // let idMeeting = Utility.getMeetingIdFromCode(code);

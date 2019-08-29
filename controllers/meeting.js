@@ -96,19 +96,24 @@ let meeting = {
   },
   getGuest: (idGuest, emailAccount, callback) => {
     console.log(idGuest, emailAccount);
-    let guest;
-    Account.findOne({
-      email: emailAccount
-    }, (err, account) => {
-      if (account) {
-        let guests = Array.from(account.guests).map(v => v.toJSON());
-        guest = guests.find(g => g._id.toString() == idGuest.toString()) 
-      } else {
-        guest = null;
-        console.log(err)
-      }
-      return callback(null, guest);
-    })
+    try {
+      let guest;
+      Account.findOne({
+        email: emailAccount
+      }, (err, account) => {
+        if (account) {
+          let guests = Array.from(account.guests).map(v => v.toJSON());
+          guest = guests.find(g => g._id.toString() == idGuest.toString())
+        } else {
+          guest = null;
+          console.log(err)
+        }
+        return callback(null, guest);
+      })
+    } catch (error) {
+      console.log(err);
+      callback(err, null)
+    }
   },
   attend: (codeMeeting, idGuest, emailAccount, callback) => {
     meeting.getGuest(idGuest, emailAccount, (err, guest) => {
