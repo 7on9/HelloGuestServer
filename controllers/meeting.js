@@ -121,7 +121,6 @@ let meeting = {
             if (!mee.guestAttended.includes(idGuest.toString())) {
               mee.guestAttended.push(idGuest);
               mee.timeLine.push(Date.now() / 1000.0);
-              console.log('Ok');
               mee.save()
                 .then(callback(null, true))
                 .catch(callback(true, null))

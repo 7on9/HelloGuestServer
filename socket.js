@@ -77,7 +77,7 @@ exports = module.exports = (io) => {
       let email = 'tamdaulong207@yahoo.com'
       // let email = 'linhtrung.thuduc@tphcm.gov.vn'
       Meeting.getGuest(idGuest, email, (err, guest) => {
-        if(guest) {
+        if (guest) {
           socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.SUCCESS, guest);
         } else {
           socket.emit(EVENT.GUEST.GET_INFO, EVENT.STATUS.FAIL, EVENT.ERROR.NOT_EXIST);
@@ -109,19 +109,21 @@ exports = module.exports = (io) => {
     /************************************CHECK_IN********************************************/
     socket.on(EVENT.GUEST.CHECKIN, (idGuest, code, email) => {
       //only for linh trung's ver
-      let email = 'tamdaulong207@yahoo.com'
+      email = 'tamdaulong207@yahoo.com'
       // let email = 'linhtrung.thuduc@tphcm.gov.vn'
       Meeting.attend(code, idGuest, email, (err, success) => {
         socket.emit(EVENT.GUEST.CHECKIN, success ? EVENT.STATUS.SUCCESS : EVENT.STATUS.FAIL);
+        if (success) {
+          let idMeeting = Utility.getMeetingIdFromCode(code);
+          let attendance = mapTimeLineMeeting.get(idMeeting);
+          if (!attendance.guestAttended.includes(idGuest)) {
+            attendance.guestAttended.push(idGuest);
+            attendance.timeLine.push(Date.now() / 1000.0);
+          }
+          io.to(code).emit(EVENT.GUEST.CHECKIN, idGuest, attendance);
+        }
       })
-      // let idMeeting = Utility.getMeetingIdFromCode(code);
-      // let attendance = mapTimeLineMeeting.get(idMeeting);
-      // if (!attendance.guestAttended.includes(idGuest)) {
-      //   attendance.guestAttended.push(idGuest);
-      //   attendance.timeLine.push(Date.now() / 1000.0);
-      // }
-      // io.to(code).emit(EVENT.GUEST.CHECKIN, idGuest, attendance);
     })
-    /************************************CHECK_IN********************************************/
-  })
+  /************************************CHECK_IN********************************************/
+})
 }
