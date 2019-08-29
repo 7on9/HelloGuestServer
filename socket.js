@@ -109,7 +109,9 @@ exports = module.exports = (io) => {
     /************************************CHECK_IN********************************************/
     socket.on(EVENT.GUEST.CHECKIN, (idGuest, code, email) => {
       //only for linh trung's ver
-      Meeting.attend(code, idGuest, 'linhtrung.thuduc@tphcm.gov.vn', (err, success) => {
+      let email = 'tamdaulong207@yahoo.com'
+      // let email = 'linhtrung.thuduc@tphcm.gov.vn'
+      Meeting.attend(code, idGuest, email, (err, success) => {
         socket.emit(EVENT.GUEST.CHECKIN, success ? EVENT.STATUS.SUCCESS : EVENT.STATUS.FAIL);
       })
       // let idMeeting = Utility.getMeetingIdFromCode(code);
